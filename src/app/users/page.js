@@ -2,6 +2,7 @@
 import ReduxProvider from "@/components/reduxProvider/reduxProvider";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
+import { useEffect } from "react";
 
 
 export default function Users () {
@@ -12,12 +13,15 @@ export default function Users () {
 
 function UserComp() {
     let route = useRouter()
-    let token = localStorage.getItem("Token")
+    useEffect(()=>{
 
-
-         let users = useSelector(function(store){
+        let token = localStorage.getItem("Token")
+        
+        
+        let users = useSelector(function(store){
             return store.logSlice.users
         })
+    },[])
 
 
     return <>
