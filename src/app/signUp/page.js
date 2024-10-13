@@ -6,6 +6,7 @@ import { addUser } from "@/store/logSlice";
 import ReduxProvider from "@/components/reduxProvider/reduxProvider";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import axios from "../../../axios";
 
 export default function SignUp () {
     return <ReduxProvider>
@@ -20,24 +21,43 @@ export default function SignUp () {
     })
     let {handleSubmit , register , formState:{errors}} = useForm()
 
-    const saveData =  (data , evt)  => {
+    const saveData =  async (data , evt)  => {
         evt.preventDefault()
         let checkDuplication = users.find((user)=>{
-            if(user.name === data.name){
+            if(user.email === data.email){
                 return true
             }
         })
-
+let userData = {
+  action : "signUp" , 
+  name : data.name ,
+  password : data.password ,
+  email : data.email
+}
         if(checkDuplication){
             toast.error("Account already exist")
         }
         else{
-            toast.success("Account Created")
+          try {
+            let resp = await axios.post('/api/auth', userData);
+          if(resp.data == "exist"){
+            toast.error("Email already exist")
+          }
+          else{
+            toast.success("Account created")
             dispatch(addUser(data))
-          route.push("./login")
+            route.push("./login")
+          }
+        } catch (e) {
+            toast.error("Error agya")
+            console.log(e);
+        }
         }   
         console.log(data)
     }
+
+
+
     return <>
     <form onSubmit = {handleSubmit(saveData)}>
     <h2 className ="">Sign Up</h2>

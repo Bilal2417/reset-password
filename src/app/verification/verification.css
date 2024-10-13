@@ -1,0 +1,58 @@
+/* OTPInput.module.css */
+.otpContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  .otpHeader {
+    text-align: center;
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    color: #333; /* Dark text for readability */
+  }
+  
+  .otpInfo {
+    margin-bottom: 20px;
+    font-size: 0.9em;
+    color: #555; /* Lighter text color */
+  }
+  .flexing{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .otpInputs {
+    display: flex;
+    justify-content: center;
+  }
+  .btn{
+    background-color: #4caf50 !important;
+    border: 1px solid #4caf50 !important;
+  }
+  .otpInput {
+    width: 40px; /* Increased width for better visibility */
+    height: 40px; /* Uniform square look */
+    margin: 0 5px; /* Spacing between inputs */
+    text-align: center; /* Center text */
+    font-size: 24px; /* Larger font size */
+    border: 2px solid #ccc; /* Light border */
+    border-radius: 5px; /* Slightly rounded corners */
+    outline: none; /* Remove default outline */
+    transition: border-color 0.3s; /* Smooth transition */
+  }
+  
+  .otpInput:focus {
+    border-color: #0070f3; /* Focused border color */
+  }
+  
+  .otpInput:valid {
+    border-color: #4caf50; /* Valid input color */
+  }
+  
+  .otpInput:invalid {
+    border-color: #f44336; /* Invalid input color */
+  }
+  

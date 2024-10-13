@@ -11,17 +11,15 @@ export let logSlice = createSlice({
             }
         ],
     loggedUser:null,
-    name : null,
-    password : null,
-    email: null,
+    otp : 0
     },
     reducers:{
         addUser : ( oldData , newData ) =>{
-            oldData.users.filter((user)=>{
-                if(!(user.name == newData.payload.name)){
-                    oldData.users.push(newData.payload)
-                }
-            })
+            // oldData.users.filter((user)=>{
+            //     if(!(user.name == newData.payload.name)){
+            //     }
+            // })
+            oldData.users.push(newData.payload)
         },
         removeUser : ( oldData , newData ) =>{
             oldData.users = oldData.users.filter((user)=>{
@@ -31,16 +29,10 @@ export let logSlice = createSlice({
         logUser : ( oldData , newData ) => {
             oldData.loggedUser = newData.payload
         },
-        newPassword : ( oldData , newData ) => {
-            oldData.password = newData.payload
-        },
-        newMail : ( oldData , newData ) => {
-            oldData.email = newData.payload
-        },
-        newName : ( oldData , newData ) => {
-            oldData.name = newData.payload
+        addOtp : ( oldData , newData ) => {
+            oldData.otp = newData.payload
         },
     }
 })
 
-export let { addUser , removeUser , logUser , newPassword , newMail , newName } = logSlice.actions
+export let { addUser , removeUser , logUser , addOtp  } = logSlice.actions

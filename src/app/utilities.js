@@ -1,5 +1,5 @@
 import * as jwt from 'jose';
-
+import moment from 'moment';
 export const verifyToken = async (token) => {
 
   const jwtKey = jwt.base64url.decode("decrypt");
@@ -11,12 +11,12 @@ export const verifyToken = async (token) => {
 
 }
 
-export const generateToken = async (userPassword  , userMail , userName) => {
+export const generateToken = async (userId) => {
 
     const jwtKey = jwt.base64url.decode("decrypt");
+    const  time = moment();
 
-
-  const token = await new jwt.SignJWT({ userPassword,  userName , userMail})
+  const token = await new jwt.SignJWT({ userId , time })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime('2d') // Token expires in 2 days

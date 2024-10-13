@@ -4,50 +4,86 @@ import { useDispatch, useSelector } from 'react-redux';
 import ReduxProvider from '../reduxProvider/reduxProvider';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { addUser, logUser } from '@/store/logSlice';
+import { addUser, addUserDataBase, logUser, logUserDataBase } from '@/store/logSlice';
 import { verifyToken } from '@/app/utilities';
 import "./header.css"
-import { useEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import axios from '../../../axios';
 export default function Header (){
 return <ReduxProvider>
     <Component/>
 </ReduxProvider>
 }
  function Component() {
+  // const [hello, setHello] = useState(false);
+  const tokenRef = useRef(false);
+  const usersRef = useRef(false);
    let dispatch = useDispatch()
    let route = useRouter()
-     let users = useSelector(function(store){
+     let userData = useSelector(function(store){
          return store.logSlice.loggedUser
      })
-     let token = localStorage.getItem("Token");
      let user;
-    //  let isVerified = false;
-     useEffect(()=>{
+     let token ;
+useEffect(()=>{
+
+  token = localStorage.getItem("Token");
+  console.log(token)
+  verify();
+})
 
        async function verify() {
-        //  if (isVerified) return;
+        let getUsers = {
+          action : "get_users"
+        }
+           let resp = await axios.post("/api/auth",getUsers)
+           if(resp.data){
+            if(!usersRef.current){
+
+              console.log("Resppp",resp.data.users)
+              resp.data.users.map((users)=>{
+                dispatch(addUser(users))
+              })
+              usersRef.current = true
+            }
+           }
          if (token) {
            try {
-             // Assuming you have a separate function to verify the token
-             let verify = await verifyToken(token); // Change this to your actual verification function
-           console.log(verify)
-           user = {
-             name: verify.payload.userName,
-             password: verify.payload.userPassword,
-             email: verify.payload.userMail,
-            };
-            dispatch(addUser(user));
-            dispatch(logUser(user.name));
-            // isVerified = true;
-          } catch (error) {
-            console.error("Token verification failed:", error);
+             let verify = await verifyToken(token); 
+             console.log(verify)
+             
+             user = {
+               action : "tokenCheck",
+               id : verify.payload.userId
+              };
+              
+              userData = await axios.post("/api/auth",user)
+            //   if (userData) {
+            //     if (!hello) {
+            //         console.log("UserData", userData);
+            //         let abc = userData.data;
+            //         console.log("display user", abc);
+            //         dispatch(addUser(abc));
+            //         dispatch(logUser(abc));
+            //         setHello(true); // Update the state
+            //     }
+            // }
+            if (userData) {
+              if (!tokenRef.current) {
+                  console.log("UserData", userData);
+                  let abc = userData.data;
+                  console.log("display user", abc);
+                  // dispatch(addUser(abc));
+                  dispatch(logUser(abc));
+                  tokenRef.current = true; // Set to true to prevent future runs
+              }
           }
-        }
+            } catch (error) {
+              console.error("Token verification failed:", error);
+            }
+          }
       }
-      // if (!isVerified) {
-        verify();
-      // }
-    },[])
+
      
     return <>
   <header className="d-flex justify-content-center py-3">
@@ -58,33 +94,34 @@ return <ReduxProvider>
         </Link>
       </li>
       <li className="nav-item">
-        {users ?  <p  className="nav-link">
-            Welcome <strong>{users.name} </strong>
+        {userData ?  <p  className="nav-link">
+            Welcome <strong>{userData.name} </strong>
         </p> : null }
       </li>
       <li className="nav-item">
-        <Link href="/users" className="nav-link">
+        <a href="/users" className="nav-link">
           Users
-        </Link>
+        </a>
       </li>
       <li className="nav-item">
-       {users ? <p onClick={()=>{
+       {userData ? <p onClick={()=>{
         dispatch(logUser(null))
         localStorage.removeItem("Token")
-        route.push("/signUp")
-       }} className="nav-link log-out">
+      }} className="nav-link log-out">
           LogOut
         </p> : 
         <Link href="/login" className="nav-link">
         Login
       </Link>} 
       </li>
-      <li className="nav-item"  onClick={()=>{
-          localStorage.removeItem("Token")
-        }}>
-        <Link href="/signUp" className="nav-link">
+      <li>
+      <p onClick={()=>{
+        dispatch(logUser(null))
+        localStorage.removeItem("Token")
+        route.push("/signUp")
+      }} className="nav-link log-out">
           SignUp
-        </Link>
+        </p> 
       </li>
     </ul>
   </header>

@@ -8,6 +8,7 @@ import ReduxProvider from "@/components/reduxProvider/reduxProvider";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { generateToken } from "../utilities";
+import axios from "../../../axios";
 
 export default function Login () {
     return <ReduxProvider>
@@ -25,24 +26,58 @@ export default function Login () {
 
     const saveData = async  (data , evt)  => {
         evt.preventDefault()
-        let checkDuplication = users.find((user)=>{
-            if(user.email === data.email && data.password === user.password){
-                return true
-            }
-        })
+        // let checkDuplication = users.find((user)=>{
+        //     if(user.email === data.email && data.password === user.password){
+        //         return true
+        //     }
+        // })
+//         let userData = new FormData()
+// userData.append('action', "login")
+// userData.append('name', data.name)
+// userData.append('password', data.password)
+// userData.append('email', data.email)
+let userData = {
+  action : "login" , 
+  name : data.name ,
+  password : data.password ,
+  email : data.email
+}
+// let mail = {
+//   action : "POST"
+// }
+try{
 
-        if(checkDuplication){
-            toast.success("Account Logged In")
-             token = await generateToken(data.password , data.email , data.name)
-             localStorage.setItem("Token" , token)
-console.log(token)
-dispatch(newName(data.name))
+
+  let checkDuplication = await axios.post("/api/auth",userData)
+  
+  if(checkDuplication.data){
+    toast.success("Account Logged In")
+
+             localStorage.setItem("Token" , checkDuplication.data.token)
+            //  if(checkDuplication.data.token){
+            //   let tokenData = {
+            //     action : "token",
+            //     token : checkDuplication.data.token,
+            //   }
+            //   try{
+
+            //     let sendToken = await axios.post("/api/auth", tokenData)
+            //   }catch(e){
+            //     console.log(e)
+            //   }
+            //  }
+// console.log(token)
+// dispatch(newName(data.name))
             dispatch(logUser(data))
-        }
+          }
         else{
-            toast.error("Account doesn't exist")
+          toast.error("Account doesn't exist")
         }   
         console.log(data)
+      }catch(e){
+        toast.error("Error")
+        console.log(e)
+      }
     }
     return <>
     <form onSubmit = {handleSubmit(saveData)}>

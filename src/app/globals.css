@@ -34,6 +34,9 @@ a {
   color: inherit;
   text-decoration: none;
 }
+.buttons{
+  margin-left: 15px;
+}
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
