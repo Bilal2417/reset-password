@@ -120,7 +120,7 @@ const transport = nodemailer.createTransport({
     },
 })
 const mailOptions = {
-    from : "extracontent1006@gmail.com" ,
+    from : ' "Superbell" <extracontent1006@gmail.com>' ,
     to : request.data.email , 
     subject : "Verification Mail" , 
     text : request.data.Otp
